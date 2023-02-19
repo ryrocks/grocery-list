@@ -15,29 +15,12 @@
         </form>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full mt-5">
-            <Table :items="items" :editItem="editItem" :removeItem="removeItem" />
+            <Table :items="items" :editItem="editItem" :removeItem="removeItem" :headers="['Name', 'Quantity', 'Action']" />
         </div>
 
-        <div v-if="editingItem !== null" class="w-full mb-4 mt-4">
-            <label for="edit-name" class="block text-gray-700 font-bold mb-2">Name:</label>
-            <input id="edit-name" v-model="editingItem.name" type="text"
-                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter item name">
-        </div>
 
-        <div v-if="editingItem !== null" class="w-full mb-4">
-            <label for="edit-quantity" class="block text-gray-700 font-bold mb-2">Quantity:</label>
-            <input id="edit-quantity" v-model.number="editingItem.quantity" type="number"
-                class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter item quantity">
-        </div>
-
-        <div v-if="editingItem !== null" class="w-full mb-4">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                @click="saveItem">Save</button>
-            <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                @click="cancelEdit">Cancel</button>
-        </div>
+        <ConfirmDialog title="Warning" message="Are you sure you want to delete this item?" :isOpen="showConfirmDialog"
+            :onConfirm="removeSelectedItem" :onCancel="cancelRemoveSelectedItem" />
     </div>
 </template>
 
@@ -54,6 +37,9 @@ const name = ref('');
 const quantity = ref(0);
 const editingItem = ref<Item | null>(null);
 const storageKey = 'grocery-list';
+const showConfirmDialog = ref(false);
+let selectedItemIndex = 0;
+
 
 // Load items from local storage on component mount
 onMounted(() => {
@@ -81,28 +67,34 @@ function addItem($event: Event) {
 }
 
 function removeItem(index: number) {
-    items.value.splice(index, 1);
+    showConfirmDialog.value = true;
+    selectedItemIndex = index;
+}
+
+function removeSelectedItem() {
+    items.value.splice(selectedItemIndex, 1);
+    showConfirmDialog.value = false;
+}
+
+function cancelRemoveSelectedItem() {
+    showConfirmDialog.value = false;
 }
 
 function editItem(index: number) {
     editingItem.value = { ...items.value[index] };
 }
 
-function saveItem() {
-    if (editingItem.value) {
-        const index = items.value.findIndex(item => item === editingItem.value);
-        if (index >= 0) {
-            items.value[index] = editingItem.value;
-            editingItem.value = null;
-        }
-    }
-}
+// function saveItem() {
+//     if (editingItem.value) {
+//         const index = items.value.findIndex(item => item === editingItem.value);
+//         if (index >= 0) {
+//             items.value[index] = editingItem.value;
+//             editingItem.value = null;
+//         }
+//     }
+// }
 
-function cancelEdit() {
-    editingItem.value = null;
-}
+// function cancelEdit() {
+//     editingItem.value = null;
+// }
 </script>
-
-<style>
-/* You can import Tailwind styles in your main.js file */
-</style>
