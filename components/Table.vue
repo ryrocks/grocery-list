@@ -8,7 +8,7 @@
             </tr>
         </thead>
         <tbody>
-            <template v-for="(item, index) in items" :key="item">
+            <template v-for="(item, index) in items" :key="item.id">
                 <tr
                     :class="{ 'bg-white border-b dark:bg-gray-900 dark:border-gray-700': index % 2 == 0, 'bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700': index % 2 !== 0 }">
                     <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{
@@ -32,6 +32,7 @@ interface TableProps {
     items?: {
         name: string
         quantity: number
+        id: string
     }[]
     editItem?: (index: number) => void
     removeItem?: (index: number) => void

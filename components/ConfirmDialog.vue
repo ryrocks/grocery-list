@@ -1,5 +1,5 @@
 <template>
-    <div v-show="isOpen" class="fixed z-10 inset-0 overflow-y-auto">
+    <div v-if="isOpen" class="fixed z-10 inset-0 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen">
             <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <div class="bg-amber-500 px-4 py-2">
