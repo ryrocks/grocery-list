@@ -7,15 +7,12 @@
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full mt-5">
-            <Table :items="items" :headers="['Name', 'Quantity', 'Action']">
-                <template #action="{ item }">
-                    <button @click="editItem(item)">Edit</button>
-                    <button @click="removeItem(items.indexOf(item))">Delete</button>
-                </template>
+            <Table :items="items" :headers="['Name', 'Quantity', 'Action']" :editItem="editItem" :removeItem="removeItem">
             </Table>
         </div>
 
-        <Modal :is-open="isModalOpen" title="Add Item" :on-save="addItem" :on-cancel="closeModal">
+        <Modal :isOpen="isModalOpen" :title="editingItem ? 'Edit Item' : 'Add Item'" :onSave="saveItem"
+            :onCancel="closeModal">
             <InputField id="name" name="name" label="Name" v-model:modelValue="name" placeholder="Enter name"
                 class="mb-4" />
             <InputField id="quantity" name="quantity" label="Quantity" v-model:modelValue="quantity"
@@ -24,8 +21,6 @@
 
         <ConfirmDialog title="Warning" message="Are you sure you want to delete this item?" :isOpen="showConfirmDialog"
             :onConfirm="removeSelectedItem" :onCancel="cancelRemoveSelectedItem" />
-
-
     </div>
 </template>
 
@@ -41,15 +36,11 @@ const items = ref<Item[]>([]);
 const name = ref('');
 const quantity = ref(0);
 const isModalOpen = ref(false);
-const isConfirmDialogOpen = ref(false);
-const confirmDialogTitle = ref('');
-const confirmDialogMessage = ref('');
 let selectedItemIndex = -1;
 
 const editingItem = ref<Item | null>(null);
 const storageKey = 'grocery-list';
 const showConfirmDialog = ref(false);
-const showModal = ref(false);
 
 // Load items from local storage on component mount
 onMounted(() => {
@@ -66,23 +57,30 @@ watch(items, (newItems) => {
 
 
 function openModal() {
-    name.value = '';
-    quantity.value = 0;
+    if (editingItem.value) {
+        name.value = editingItem.value.name;
+        quantity.value = editingItem.value.quantity;
+    } else {
+        name.value = '';
+        quantity.value = 0;
+    }
+
     isModalOpen.value = true;
 }
 
 function closeModal() {
+    editingItem.value = null;
     isModalOpen.value = false;
 }
 
-function addItem(item: Item) {
-    let uuid = self.crypto.randomUUID();
-    const itemWithId = {
-        id: uuid,
-        name: item.name,
-        quantity: item.quantity,
-    };
-    items.value.push(itemWithId);
+function saveItem(item: Item) {
+    if (editingItem.value) {
+        const index = items.value.findIndex((i) => i.id === editingItem.value?.id);
+        items.value[index] = { ...editingItem.value, ...item };
+    } else {
+        items.value.push(item);
+    }
+
     closeModal();
 }
 
@@ -102,16 +100,7 @@ function cancelRemoveSelectedItem() {
 
 function editItem(index: number) {
     editingItem.value = { ...items.value[index] };
-    showModal.value = true;
-}
-
-function saveItem() {
-    addItem();
-}
-
-function cancelEdit() {
-    editingItem.value = null;
-    showModal.value = false;
+    openModal();
 }
 
 </script>

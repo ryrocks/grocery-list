@@ -1,5 +1,6 @@
 <template>
-    <div v-if="isOpen" class="fixed z-10 inset-0 overflow-y-auto">
+    <div v-if="isOpen" class="fixed z-10 inset-0 overflow-hidden">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 z-0"></div>
         <div class="flex items-center justify-center min-h-screen">
             <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <div class="bg-amber-500 px-4 py-2">
@@ -43,6 +44,7 @@ const isOpen = ref(false)
 
 watch(() => props.isOpen, (value) => {
     isOpen.value = value
+    value === true ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto'
 })
 
 function handleConfirm() {
@@ -55,5 +57,6 @@ function handleCancel() {
     isOpen.value = false
 }
 
-
 </script>
+
+

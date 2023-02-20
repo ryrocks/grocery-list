@@ -1,6 +1,7 @@
 <template>
-    <div class="fixed z-10 inset-0 overflow-y-auto" :class="{ 'hidden': !isOpen }">
-        <div class="flex items-center justify-center min-h-screen">
+    <div v-if="isOpen" class="fixed z-10 inset-0 overflow-hidden">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 z-0"></div>
+        <div class="flex items-center justify-center min-h-screen z-10">
             <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                 <div class="bg-gray-200 px-4 py-2 flex justify-between items-center">
                     <h1 class="text-lg font-bold">{{ title }}</h1>
@@ -32,7 +33,7 @@
 interface Item {
     name: string;
     quantity: number;
-    id?: string;
+    id: string;
 }
 
 interface ModalProps {
@@ -53,6 +54,10 @@ const props = withDefaults(defineProps<ModalProps>(), {
     onCancel: () => { }
 });
 
+watch(() => props.isOpen, (value) => {
+    value === true ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto'
+})
+
 function onFormSubmit() {
     const formElement = form.value;
     if (!formElement) return;
@@ -61,12 +66,15 @@ function onFormSubmit() {
     const name = formData.get('name') as string;
     const quantity = Number(formData.get('quantity'));
 
+    let uuid = self.crypto.randomUUID();
     const item: Item = {
         name,
         quantity,
+        id: uuid,
     };
 
     props.onSave(item);
 }
 
 </script>
+
