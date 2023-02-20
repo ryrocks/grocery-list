@@ -12,7 +12,7 @@
         </div>
 
         <Modal :isOpen="isModalOpen" :title="editingItem ? 'Edit Item' : 'Add Item'" :onSave="saveItem"
-            :onCancel="closeModal">
+            :onCancel="closeModal" :editingItem="editingItem">
             <InputField id="name" name="name" label="Name" v-model:modelValue="name" placeholder="Enter name"
                 class="mb-4" />
             <InputField id="quantity" name="quantity" label="Quantity" v-model:modelValue="quantity"
@@ -53,8 +53,7 @@ onMounted(() => {
 // Save items to local storage whenever the items array changes
 watch(items, (newItems) => {
     localStorage.setItem(storageKey, JSON.stringify(newItems));
-});
-
+}, { deep: true });
 
 function openModal() {
     if (editingItem.value) {
@@ -81,6 +80,8 @@ function saveItem(item: Item) {
         items.value.push(item);
     }
 
+    // Save items to local storage whenever the items array changes
+    localStorage.setItem(storageKey, JSON.stringify(items.value));
     closeModal();
 }
 

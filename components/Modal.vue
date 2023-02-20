@@ -2,7 +2,7 @@
     <div v-if="isOpen" class="fixed z-10 inset-0 overflow-hidden">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 z-0"></div>
         <div class="flex items-center justify-center min-h-screen z-10">
-            <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all w-4/5 sm:max-w-lg sm:w-full">
                 <div class="bg-gray-200 px-4 py-2 flex justify-between items-center">
                     <h1 class="text-lg font-bold">{{ title }}</h1>
                     <button class="text-gray-700 hover:text-gray-900" @click="onCancel">
@@ -65,8 +65,7 @@ function onFormSubmit() {
     const formData = new FormData(formElement);
     const name = formData.get('name') as string;
     const quantity = Number(formData.get('quantity'));
-
-    let uuid = self.crypto.randomUUID();
+    let uuid = props.editingItem ? props.editingItem.id : self.crypto.randomUUID();
     const item: Item = {
         name,
         quantity,
