@@ -1,6 +1,9 @@
-# Nuxt 3 Minimal Starter
+# Nuxt 3 Grocery List
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+
+## Demo
+[Link](https://mellifluous-kataifi-c0d694.netlify.app/)
 
 ## Setup
 
